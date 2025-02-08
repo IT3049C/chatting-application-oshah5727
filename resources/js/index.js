@@ -55,7 +55,7 @@ function fetchMessages() {
   ];
 }
 
-function updateMessages() {
+function updateMessagesInChatBox() {
   const myName = nameInput.value;
   const messages = fetchMessages();
   let formattedMessages = ``;
@@ -65,5 +65,26 @@ function updateMessages() {
   });
   chatBox.innerHTML = formattedMessages;
 }
+updateMessagesInChatBox();
 
-updateMessages();
+function sendMessages(sender, text) {
+  const newMessage = {
+    id: Date.now(), 
+    sender: sender,
+    text: text,
+    timestamp: new Date().getTime() 
+  };
+
+  const formattedMessage = formatMessage(newMessage, sender);
+  chatBox.innerHTML += formattedMessage;
+}
+
+sendButton.addEventListener(`click`, function(event) {
+  event.preventDefault();
+  const sender = nameInput.value;
+  const message = messageInput.value;
+  sendMessages(sender, message);
+  messageInput.value = ``;
+});
+
+
