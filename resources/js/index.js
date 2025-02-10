@@ -2,10 +2,24 @@ const nameInput = document.getElementById(`my-name-input`);
 const messageInput = document.getElementById(`my-message`);
 const sendButton = document.getElementById(`send-button`);
 const chatBox = document.getElementById(`chat`);
+const serverURL = `https://it3049c-chat.fly.dev/messages`;
+
+
+async function fetchMessages() {
+  try {
+    const response = await fetch(serverURL);
+    if (!response.ok) throw new Error(`Failed to fetch messages`);
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching messages:`, error);
+    return [];  
+  }
+}
 
 function formatMessage(message, myNameInput) {
   const time = new Date(message.timestamp);
   const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
+
 
   if (myNameInput === message.sender) {
     return `
@@ -32,32 +46,10 @@ function formatMessage(message, myNameInput) {
   }
 }
 
-function fetchMessages() {
-  return [
-    {
-      id: 1,
-      text: `This is a message from Opal :)`,
-      sender: `Opal Shah`,
-      timestamp: 1537410673072
-    },
-    {
-      id: 2,
-      text: `This is another message from Opal`,
-      sender: `Opal Shah`,
-      timestamp: 1537410673072
-    },
-    {
-      id: 3,
-      text: `This is a message from the system`,
-      sender: `System`,
-      timestamp: 1537410673072
-    }
-  ];
-}
 
-function updateMessagesInChatBox() {
+async function updateMessagesInChatBox() {
   const myName = nameInput.value;
-  const messages = fetchMessages();
+  const messages = await fetchMessages();
   let formattedMessages = ``;
 
   messages.forEach(message => {
@@ -65,26 +57,11 @@ function updateMessagesInChatBox() {
   });
   chatBox.innerHTML = formattedMessages;
 }
+
 updateMessagesInChatBox();
 
-function sendMessages(sender, text) {
-  const newMessage = {
-    id: Date.now(), 
-    sender: sender,
-    text: text,
-    timestamp: new Date().getTime() 
-  };
 
-  const formattedMessage = formatMessage(newMessage, sender);
-  chatBox.innerHTML += formattedMessage;
-}
-
-sendButton.addEventListener(`click`, function(event) {
-  event.preventDefault();
-  const sender = nameInput.value;
-  const message = messageInput.value;
-  sendMessages(sender, message);
-  messageInput.value = ``;
-});
+const MILLISECONDS_IN_TEN_SECONDS = 10000;
+setInterval(updateMessagesInChatBox, MILLISECONDS_IN_TEN_SECONDS);
 
 
