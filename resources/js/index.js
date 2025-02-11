@@ -60,7 +60,7 @@ async function updateMessagesInChatBox() {
 
 updateMessagesInChatBox();
 
-const MILLISECONDS_IN_TEN_SECONDS = 10000;
+const MILLISECONDS_IN_TEN_SECONDS = 1000;
 setInterval(updateMessagesInChatBox, MILLISECONDS_IN_TEN_SECONDS);
 
 
@@ -85,6 +85,7 @@ async function sendMessages(username, text) {
     }
 
     await updateMessagesInChatBox();
+
     messageInput.value = ``;  
   } catch (error) {
     console.error(`Error sending message:`, error);
