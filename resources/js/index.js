@@ -60,8 +60,46 @@ async function updateMessagesInChatBox() {
 
 updateMessagesInChatBox();
 
-
 const MILLISECONDS_IN_TEN_SECONDS = 10000;
 setInterval(updateMessagesInChatBox, MILLISECONDS_IN_TEN_SECONDS);
 
 
+async function sendMessages(username, text) {
+  const newMessage = {
+    sender: username,
+    text: text,
+    timestamp: new Date()
+  };
+
+  try {
+    const response = await fetch(serverURL, {
+      method: `POST`,
+      headers: {
+        'Content-Type': `application/json`
+      },
+      body: JSON.stringify(newMessage)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send message`);
+    }
+
+    await updateMessagesInChatBox();
+    messageInput.value = ``;  
+  } catch (error) {
+    console.error(`Error sending message:`, error);
+  }
+}
+
+sendButton.addEventListener(`click`, function(event) {
+  event.preventDefault();
+  const sender = nameInput ? nameInput.value : ``;
+  const message = messageInput ? messageInput.value : ``;
+  
+  if (message.trim()) {
+    sendMessages(sender, message);
+  }
+
+  updateMessagesInChatBox();
+
+});
